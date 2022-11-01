@@ -11,6 +11,11 @@ const registerServiceWorker = async () => {
             } else if (registration.active) {
                 console.log("Service worker active");
             }
+
+            self.addEventListener("fetch", event => {
+                console.log('WORKER: Fetching', event.request);
+            });
+
         } catch (error) {
             console.error(`Registration failed with ${error}`);
         }
