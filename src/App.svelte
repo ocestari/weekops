@@ -157,6 +157,7 @@
   {#each daysInCurrentWeek as day (day)}
     <div class="group snap-center w-full p-3 rounded-lg bg-slate-50 border border-slate-200 h-full"
       class:dragging-over={draggingOverList === day}
+      class:is-today={day.getDate() === new Date().getDate()}
       on:dragenter={() => draggingOverList = day}
       on:drop={(event) => onDropItem(event, day)}
       on:dragend={() => draggingOverList = null}
@@ -164,6 +165,9 @@
     >
       <h2 class="font-medium">
         {getDayOfWeek(day.getDay()) + ' ' + day.getDate()}
+        {#if day.getDate() === new Date().getDate()}
+          <span class="text-xs text-slate-400"> (Today)</span>
+        {/if}
       </h2>
       <ul class="min-w-[288px]">
         {#each getItemsFromDay(day) as item (item.id)}
@@ -248,7 +252,6 @@
 </main>
 
 <style lang="scss">
-
 
   .dragging-over {
     background: theme('colors.blue.50');
