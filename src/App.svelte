@@ -186,7 +186,7 @@
 </div>
 {#if showModal}
 <!-- svelte-ignore a11y-click-events-have-key-events -->
-<div class="fixed bg-slate-900 bottom-0 left-0 right-0 top-0 bg-opacity-80 backdrop-blur-sm flex justify-center items-center p-4 overflow-hidden" on:click|self={() => showModal = false}
+<div class="fixed bg-slate-900 bottom-0 left-0 right-0 top-0 bg-opacity-80 backdrop-blur-sm p-4 overflow-hidden flex items-center justify-center" on:click|self={() => showModal = false}
   >
   {#if modalType === 'addItem'}
   <div class="modal-box">
@@ -350,13 +350,6 @@
     background-color: #fff;
     padding: 1rem;
     border-radius: theme('borderRadius.lg');
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 400px;
-    max-width: 100%;
   }
 
 ::-webkit-scrollbar {
