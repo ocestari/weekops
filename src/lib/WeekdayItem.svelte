@@ -24,11 +24,14 @@
   
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <li 
+    draggable="true"
     class="flex items-center gap-2 p-2 rounded-md mt-1 bg-white cursor-pointer hover:outline outline-1 outline-blue-300"
     class:task={item.type === 'task'}
     class:note={item.type === 'note'}
     class:event={item.type === 'event'}
     on:click={onClick}
+    on:dragstart={() => dispatch('dragstart', item)}
+    on:dragend={() => dispatch('dragend', item)}
 >   
     <div class="icon rounded-full p-1">    
         <Icon icon={icons[item.type]} height="21" />

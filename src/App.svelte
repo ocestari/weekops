@@ -1,7 +1,7 @@
 <script lang="ts">
   import Icon from '@iconify/svelte';
   import { getWeekOfMonth, getWeeksInMonth, getDayOfYear, eachWeekOfInterval, eachDayOfInterval } from 'date-fns'
-  import { addItem as LibAddItem, getItemsFromDay, removeItem, updateItem } from './lib/'
+  import { addItem as LibAddItem, getItemsFromDay, moveItem, removeItem, updateItem } from './lib/'
   import WeekdayItem from './lib/WeekdayItem.svelte';
 
   let showModal = false
@@ -24,16 +24,20 @@
   }, {
     weekStartsOn: 1,
   })
-  let daysInCurrentWeek = eachDayOfInterval({
-    start: new Date(currentYear, today.getMonth(), today.getDate() - today.getDay() + 1),
-    end: new Date(currentYear, today.getMonth(), today.getDate() - today.getDay() + 7),
-  })
+  let daysInCurrentWeek = getDaysInCurrentWeek()
 
-  function reloadDaysInCurrentWeek () {
-    daysInCurrentWeek = eachDayOfInterval({
+  function getDaysInCurrentWeek() {
+    const days = eachDayOfInterval({
       start: new Date(currentYear, today.getMonth(), today.getDate() - today.getDay() + 1),
       end: new Date(currentYear, today.getMonth(), today.getDate() - today.getDay() + 7),
     })
+    // Remove Saturday and Sunday
+    days.splice(5, 2)
+    return days
+  }
+
+  function reloadDaysInCurrentWeek () {
+    daysInCurrentWeek = getDaysInCurrentWeek()
   }
 
   function recalculate() {
@@ -121,6 +125,17 @@
     showModal = false
     reloadDaysInCurrentWeek()
   }
+
+
+  // DRAG AND DROP
+  let draggingOverList: Date = null
+  let draggingOverItem = null
+
+  function onDropItem(event: DragEvent, day: Date) {
+    event.preventDefault()
+    moveItem(draggingOverItem.id, day)
+    reloadDaysInCurrentWeek()
+  }
 </script>
 
 <main class="min-h-screen flex flex-col overflow-hidden">
@@ -139,28 +154,36 @@
 <!-- ... -->
 <div class="flex m-1 rounded-md gap-3 p-3 flex-grow snap-proximity  snap-x overflow-x-auto">
 
-  {#each daysInCurrentWeek as day}
-  {#if [1,2,3,4,5].includes(day.getDay())}
-    <div class="group snap-center w-full p-3 rounded-lg bg-slate-50 border border-slate-200 h-full">
+  {#each daysInCurrentWeek as day (day)}
+    <div class="group snap-center w-full p-3 rounded-lg bg-slate-50 border border-slate-200 h-full"
+      class:dragging-over={draggingOverList === day}
+      on:dragenter={() => draggingOverList = day}
+      on:drop={(event) => onDropItem(event, day)}
+      on:dragend={() => draggingOverList = null}
+      on:dragover={(event) => event.preventDefault()}
+    >
       <h2 class="font-medium">
         {getDayOfWeek(day.getDay()) + ' ' + day.getDate()}
       </h2>
       <ul class="min-w-[288px]">
-        {#each getItemsFromDay(day) as item}
-        <WeekdayItem item={item} on:click={() => onEditClick(item)} />
+        {#each getItemsFromDay(day) as item (item.id)}
+          <WeekdayItem item={item} on:click={() => onEditClick(item)} 
+            on:dragstart={() => draggingOverItem = item}
+            on:dragend={() => draggingOverItem = null}
+            />
           {/each}
       </ul>
 
       <button class="p-2 opacity-0 group-hover:opacity-100 text-sm text-center text-slate-400 hover:text-slate-800 transition-colors w-full" on:click={() => onAddClick(day)}>Add something</button>
     
     </div>
-  {/if}
 
   {/each}
 </div>
 {#if showModal}
 <!-- svelte-ignore a11y-click-events-have-key-events -->
-<div class="fixed bg-slate-900 bottom-0 left-0 right-0 top-0 bg-opacity-80 backdrop-blur-sm flex justify-center items-center p-4 overflow-hidden" on:click|self={() => showModal = false}>
+<div class="fixed bg-slate-900 bottom-0 left-0 right-0 top-0 bg-opacity-80 backdrop-blur-sm flex justify-center items-center p-4 overflow-hidden" on:click|self={() => showModal = false}
+  >
   {#if modalType === 'addItem'}
   <div class="modal-box">
     <h1 class="text-center font-medium mb-4 text-lg">{selectedDay.toLocaleDateString('en-US', {
@@ -225,6 +248,13 @@
 </main>
 
 <style lang="scss">
+
+
+  .dragging-over {
+    background: theme('colors.blue.50');
+    border: 1px solid theme('colors.blue.400')
+  }
+
   label.task-type {
     display: inline-flex;
     flex-direction: column;

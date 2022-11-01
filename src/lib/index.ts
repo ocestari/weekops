@@ -80,3 +80,13 @@ export function updateItem(item: Item) {
   const newItems = items.map((i) => (i.id === item.id ? item : i));
   LS.set("items", JSON.stringify(newItems));
 }
+
+export function moveItem(id: string, date: Date) {
+  const items = getItems();
+  console.log(items);
+  const itemCopy = items.find((item) => item.id === id);
+  if (itemCopy) {
+    addItem({ ...itemCopy, date });
+    removeItem(id);
+  }
+}
