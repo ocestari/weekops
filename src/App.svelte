@@ -2,6 +2,7 @@
   import Icon from '@iconify/svelte';
   import { getWeekOfMonth, getWeeksInMonth, getDayOfYear, eachWeekOfInterval, eachDayOfInterval } from 'date-fns'
   import { addItem as LibAddItem, getItemsFromDay, moveItem, removeItem, updateItem } from './lib/'
+  import ItemIcon from './lib/ItemIcon.svelte';
   import WeekdayItem from './lib/WeekdayItem.svelte';
 
   let showModal = false
@@ -229,6 +230,10 @@
   {/if}
   {#if modalType === 'editItem'}
   <div class="modal-box">
+    <h2 class="font-medium flex items-center gap-2">
+      <ItemIcon colors item={selectedItem} />
+      {selectedItem.name}
+    </h2>
     <label for="item-name">
       Name
       <input type="text" name="item-name" id="item-name" bind:value={selectedItem.name}>
