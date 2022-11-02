@@ -139,23 +139,23 @@
 </script>
 
 <main class="min-h-screen flex flex-col overflow-hidden">
-  <header class="flex items-center border-b p-2">
+  <header class="flex items-center mt-2">
     <button class="mx-3 rounded-full hover:bg-slate-100 p-2" on:click={setPrevWeek}>
       <Icon icon="heroicons:chevron-left" />
     </button>
-    <h1 class="text-xl font-medium mr-3">{formattedToday}</h1>
-    <p>Week { `${currentWeek}` }</p>
+    <h1 class="font-medium mr-3">{formattedToday}</h1>
+    <p class="text-xs">Week { `${currentWeek}` }</p>
     <button class="p-2 ml-3 rounded-full hover:bg-slate-100" on:click={setNextWeek}>
       <Icon icon="heroicons:chevron-right" />
     </button>
     <button class="ml-auto mr-4" on:click={goToToday}>Today</button>
   </header>
 
-<!-- ... -->
-<div class="flex m-1 rounded-md gap-3 p-3 flex-grow snap-proximity  snap-x overflow-x-auto">
+<!-- KANBAN -->
+<div class="bg-dotted-grid border flex m-2 rounded-lg shadow-inner gap-3 p-2 flex-grow snap-proximity  snap-x md:snap-none overflow-x-auto">
 
   {#each daysInCurrentWeek as day (day)}
-    <div class="group snap-center w-full p-3 rounded-lg bg-slate-50 border border-slate-200 h-full"
+    <div class="group snap-center w-full p-3 rounded-lg border-slate-200 "
       class:dragging-over={draggingOverList === day}
       class:is-today={day.getDate() === new Date().getDate()}
       on:dragenter={() => draggingOverList = day}
@@ -163,13 +163,13 @@
       on:dragend={() => draggingOverList = null}
       on:dragover={(event) => event.preventDefault()}
     >
-      <h2 class="font-medium">
+      <h2 class="font-medium flex items-center gap-2">
         {getDayOfWeek(day.getDay()) + ' ' + day.getDate()}
         {#if day.getDate() === new Date().getDate()}
-          <span class="text-xs text-slate-400"> (Today)</span>
+          <span class="bg-green-100 px-2 py-1 rounded-lg text-xs text-green-500">Today</span>
         {/if}
       </h2>
-      <ul class="min-w-[288px]">
+      <ul class="min-w-[288px] space-y-2 mt-2">
         {#each getItemsFromDay(day) as item (item.id)}
           <WeekdayItem item={item} on:click={() => onEditClick(item)} 
             on:dragstart={() => draggingOverItem = item}
@@ -178,7 +178,10 @@
           {/each}
       </ul>
 
-      <button class="p-2 opacity-0 group-hover:opacity-100 text-sm text-center text-slate-400 hover:text-slate-800 transition-colors w-full" on:click={() => onAddClick(day)}>Add something</button>
+      <button class="flex gap-2 hover:bg-slate-800 hover:bg-opacity-5 font-medium justify-center items-center mt-2 rounded-md p-2 md:opacity-0 group-hover:opacity-100 text-sm text-center text-slate-400 hover:text-slate-800 transition w-full" on:click={() => onAddClick(day)}>
+        <Icon icon="heroicons:plus" />
+        Add something
+      </button>
     
     </div>
 
@@ -241,7 +244,7 @@
     </label>
     {/if}
     <div class="actions">
-      <button class="destroy" on:click={deleteItem}>Delete</button>
+      <button class="destroy-text" on:click={deleteItem}>Delete</button>
       <button class="primary" on:click={onUpdateItemClick}>Save</button>
     </div>
   </div>
@@ -255,7 +258,7 @@
 
   .dragging-over {
     background: theme('colors.blue.50');
-    border: 1px solid theme('colors.blue.400')
+    outline: 1px solid theme('colors.blue.400')
   }
 
   label.task-type {
@@ -345,6 +348,23 @@
       background-color: theme('colors.red.700');
     }
   }
+  button.destroy-text {
+    background-color: transparent;
+    color: theme('colors.red.500');
+    font-weight: 500;
+    padding: 0.5rem 2rem;
+    border-radius: theme('borderRadius.lg');
+    border: none;
+    cursor: pointer;
+    transition: .2s;
+    &:hover {
+      transition: .2s;
+      background-color: theme('colors.red.100');
+    }
+    &:active {
+      background-color: theme('colors.red.200');
+    }
+  }
 
   .modal-box {
     background-color: #fff;
@@ -353,8 +373,8 @@
   }
 
 ::-webkit-scrollbar {
-  width: 12px;
-  height: 12px;
+  width: 8px;
+  height: 8px;
 }
 
 /* Track */
@@ -364,13 +384,25 @@
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: theme('colors.slate.700');
+  background: theme('colors.slate.200');
   border-radius: theme('borderRadius.md');
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
   background: theme('colors.slate.800');
+}
+.bg-dotted-grid {
+  $bg-color: theme('colors.slate.50');
+  $dot-color: hsl(256,33,70);
+  $dot-size: 1px;
+  $dot-space: 22px;
+
+  background:
+		linear-gradient(90deg, $bg-color ($dot-space - $dot-size), transparent 1%) center,
+		linear-gradient($bg-color ($dot-space - $dot-size), transparent 1%) center,
+		$dot-color;
+	background-size: $dot-space $dot-space;
 }
 
 </style>
