@@ -188,7 +188,7 @@
           {/each}
       </ul>
 
-      <button class="flex gap-2 hover:bg-slate-800 hover:bg-opacity-5 font-medium justify-center items-center mt-2 rounded-md p-2 md:opacity-0 group-hover:opacity-100 text-sm text-center text-slate-400 hover:text-slate-800 transition w-full" on:click={() => onAddClick(day)}>
+      <button class="flex gap-2 hover:bg-blue-400 hover:bg-opacity-5 font-medium hover:text-blue-600 justify-center items-center mt-2 rounded-md p-2 md:opacity-0 group-hover:opacity-100 text-sm text-center text-slate-400  transition w-full" on:click={() => onAddClick(day)}>
         <Icon icon="heroicons:plus" />
         Add something
       </button>
@@ -325,6 +325,10 @@
       border: 1px solid #ddd;
       padding: 0.5rem 1rem;
       border-radius: theme('borderRadius.lg');
+      &:focus {
+        outline: 1px solid theme('colors.blue.400');
+        border: 1px solid transparent;
+      }
     }
   }
 
