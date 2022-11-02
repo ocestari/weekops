@@ -1,6 +1,6 @@
 {
   "background_color": "#ffffff",
-  "description": "WeekOps is an open-source, fast app to plan your week. All data is stored offline in your browser. Made by Jordi Enric.",
+  "description": "WeekOps is an open-source, fast app to plan your week. All data is stored offline in your browser.",
   "dir": "ltr",
   "display": "standalone",
   "name": "WeekOps",
@@ -13,10 +13,6 @@
   "icons": [
     {
       "src": "favicon.ico",
-      "type": "image/x-icon"
-    },
-    {
-      "src": "/favicon.ico",
       "type": "image/x-icon"
     },
     {
