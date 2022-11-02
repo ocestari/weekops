@@ -82,6 +82,10 @@
     selectedDay = day
     showModal = true
     modalType = "addItem"
+    setTimeout(() => {
+      const input: HTMLElement = document.querySelector('#item-name')
+      input.focus()
+    }, 100)
   }
 
   function getDayOfWeek(day: number) {
@@ -115,8 +119,13 @@
     selectedItem = item
     modalType = 'editItem'
     showModal = true
+    setTimeout(() => {
+      const input: HTMLElement = document.querySelector('#item-name-edit')
+      input.focus()
+    }, 100)
   }
   function deleteItem() {
+    console.log('delete item')
     removeItem(selectedItem.id)
     showModal = false
     reloadDaysInCurrentWeek()
@@ -198,6 +207,7 @@
       day: 'numeric',
       month: 'long',
     })}</h1>
+    <form on:submit|preventDefault={addItem}>
     <div>
     { #each newItemTypes as type }
     <input type="radio" hidden id={type.id} bind:group={newItemType} name="newItemType" value={type.id}>
@@ -210,7 +220,7 @@
 
     {#if newItemType}
     <label class="capitalize mt-4" for="task-name">{newItemType}
-      <input type="text" name="item-name" id="item-name" bind:value={newItemName}>
+      <input type="text" autocomplete="off" name="item-name" id="item-name" bind:value={newItemName}>
     </label>
     <label for="item-desc">
       Description
@@ -224,8 +234,9 @@
     {/if}
     {/if}
     <div class="mt-5 flex justify-end">
-      <button class="primary" on:click={addItem}>Add {newItemType}</button>
+      <button type="submit" class="primary">Add {newItemType}</button>
     </div>
+  </form>
   </div>
   {/if}
   {#if modalType === 'editItem'}
@@ -234,24 +245,26 @@
       <ItemIcon colors item={selectedItem} />
       {selectedItem.name}
     </h2>
-    <label for="item-name">
-      Name
-      <input type="text" name="item-name" id="item-name" bind:value={selectedItem.name}>
-    </label>
-    <label for="item-desc">
-      Description
-      <textarea bind:value={selectedItem.description} name="item-desc" id="item-desc" cols="30" rows="5"></textarea>
-    </label>
-    {#if selectedItem.type === 'event'}
-    <label for="item-date">
-      Time
-      <input bind:value={selectedItem.time} type="time" name="item-time" id="item-date">
-    </label>
-    {/if}
-    <div class="actions">
-      <button class="destroy-text" on:click={deleteItem}>Delete</button>
-      <button class="primary" on:click={onUpdateItemClick}>Save</button>
-    </div>
+    <form on:submit|preventDefault={onUpdateItemClick}>
+      <label for="item-name">
+        Name
+        <input type="text" name="item-name" autocomplete="off" id="item-name-edit" bind:value={selectedItem.name}>
+      </label>
+      <label for="item-desc">
+        Description
+        <textarea bind:value={selectedItem.description} name="item-desc" id="item-desc-edit" cols="30" rows="5"></textarea>
+      </label>
+      {#if selectedItem.type === 'event'}
+      <label for="item-date">
+        Time
+        <input bind:value={selectedItem.time} type="time" name="item-time" id="item-date">
+      </label>
+      {/if}
+      <div class="actions">
+        <button tabindex="-1" type="button" class="destroy-text" on:click={deleteItem}>Delete</button>
+        <button type="submit" class="primary">Save</button>
+      </div>
+  </form>
   </div>
   {/if}
 </div>
