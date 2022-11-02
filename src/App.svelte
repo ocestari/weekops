@@ -4,9 +4,11 @@
   import { addItem as LibAddItem, getItemsFromDay, moveItem, removeItem, updateItem } from './lib/'
   import ItemIcon from './lib/ItemIcon.svelte';
   import WeekdayItem from './lib/WeekdayItem.svelte';
+  import Settings from './lib/Settings.svelte'
+	import { fly, fade } from 'svelte/transition';
 
   let showModal = false
-  let modalType: 'editItem' | 'addItem' = 'addItem'
+  let modalType: 'editItem' | 'addItem' | 'settings' = 'addItem'
 
 
   let today = new Date()
@@ -48,20 +50,26 @@
     })
   }
 
+  let transitionX = 0
   function setPrevWeek () {
+    transitionX = 100
     today.setDate(today.getDate() - 7)
     recalculate()
     reloadDaysInCurrentWeek()
   }
   function setNextWeek () {
+    transitionX = -100
     today.setDate(today.getDate() + 7)
     recalculate()
     reloadDaysInCurrentWeek()
   }
   function goToToday() {
     today = new Date()
-    recalculate()
-    reloadDaysInCurrentWeek()
+    if (currentWeek !== getWeekOfMonth(today)) {
+      transitionX = 100
+      recalculate()
+      reloadDaysInCurrentWeek()
+    }
   }
 
   // New Item
@@ -146,6 +154,13 @@
     moveItem(draggingOverItem.id, day)
     reloadDaysInCurrentWeek()
   }
+
+
+  // INFO MODAL
+  function onSettingsClick() {
+    modalType = 'settings'
+    showModal = true
+  }
 </script>
 
 <main class="min-h-screen flex flex-col overflow-hidden">
@@ -159,6 +174,9 @@
       <Icon icon="heroicons:chevron-right" />
     </button>
     <button class="ml-auto mr-4" on:click={goToToday}>Today</button>
+    <button class="mr-4 p-1 rounded-full hover:bg-slate-100 text-slate-500 hover:text-slate-800" on:click={onSettingsClick}>
+      <Icon height={24} icon="heroicons:bars-2" />
+    </button>
   </header>
 
 <!-- KANBAN -->
@@ -185,7 +203,7 @@
             on:dragstart={() => draggingOverItem = item}
             on:dragend={() => draggingOverItem = null}
             />
-          {/each}
+        {/each}
       </ul>
 
       <button class="flex gap-2 hover:bg-blue-400 hover:bg-opacity-5 font-medium hover:text-blue-600 justify-center items-center mt-2 rounded-md p-2 md:opacity-0 group-hover:opacity-100 text-sm text-center text-slate-400  transition w-full" on:click={() => onAddClick(day)}>
@@ -199,10 +217,10 @@
 </div>
 {#if showModal}
 <!-- svelte-ignore a11y-click-events-have-key-events -->
-<div class="fixed bg-slate-900 bottom-0 left-0 right-0 top-0 bg-opacity-80 backdrop-blur-sm p-4 overflow-hidden flex items-center justify-center" on:click|self={() => showModal = false}
+<div transition:fade={{ duration: 100 }} class="fixed bg-slate-900 bottom-0 left-0 right-0 top-0 bg-opacity-80 backdrop-blur-sm p-4 overflow-hidden flex items-center justify-center" on:click|self={() => showModal = false}
   >
   {#if modalType === 'addItem'}
-  <div class="modal-box">
+  <div transition:fly={{ y: 100, duration: 200 }} class="modal-box">
     <h1 class="text-center font-medium mb-4 text-lg">{selectedDay.toLocaleDateString('en-US', {
       day: 'numeric',
       month: 'long',
@@ -240,7 +258,7 @@
   </div>
   {/if}
   {#if modalType === 'editItem'}
-  <div class="modal-box">
+  <div transition:fly={{ y: 100, duration: 200 }} class="modal-box">
     <h2 class="font-medium flex items-center gap-2">
       <ItemIcon colors item={selectedItem} />
       {selectedItem.name}
@@ -265,6 +283,11 @@
         <button type="submit" class="primary">Save</button>
       </div>
   </form>
+  </div>
+  {/if}
+  {#if modalType === 'settings'}
+  <div transition:fly={{ y: 100, duration: 200 }}>
+    <Settings  />
   </div>
   {/if}
 </div>
@@ -386,12 +409,6 @@
     &:active {
       background-color: theme('colors.red.200');
     }
-  }
-
-  .modal-box {
-    background-color: #fff;
-    padding: 1rem;
-    border-radius: theme('borderRadius.lg');
   }
 
 ::-webkit-scrollbar {
