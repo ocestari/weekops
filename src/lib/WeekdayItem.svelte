@@ -1,7 +1,6 @@
 <script lang="ts">
     import type { Item } from './index'
     import Icon from '@iconify/svelte';
-    import { removeItem } from './index'
     import { createEventDispatcher } from 'svelte';
 
     export let item: Item
@@ -12,13 +11,25 @@
     }
 
     const icons = {
-        'task': 'heroicons:check-circle' ,
+        'task': 'heroicons:check-circle',
+        'task:not-done': 'heroicons:stop-circle',
+        'task:done': 'heroicons:check-circle',
         'note': 'heroicons:document-text' ,
         'event': 'heroicons:calendar' ,
     }
 
-    function onDeleteClick() {
-        removeItem(item.id)
+    function toggleDone() {
+        if (item.type === 'task') {
+            dispatch('click:done', !item.done);
+        }
+    }
+
+    function getTextClasses() {
+        let classes = '';
+        if (item.type === 'task' && item.done) {
+            classes += ' line-through opacity-50';
+        }
+        return classes;
     }
 </script>
   
@@ -34,12 +45,21 @@
     on:dragend={() => dispatch('dragend', item)}
 >
     <div class="flex items-center gap-2">
+        {#if item.type !== 'task'}
         <div class="icon rounded-full p-1">    
             <Icon icon={icons[item.type]} height="21" />
         </div>
-            <p>
-                {item.name || "-"}
-            </p>
+        {/if}
+        {#if item.type === 'task'}
+            <button class="text-slate-400 hover:text-blue-500 p-1 bg-slate-100 rounded-full"
+            class:done={item.done}
+            on:click|stopPropagation={toggleDone}>
+                <Icon icon={icons[item.type + (item.done ? ':done' : ':not-done')]} height="21" />
+            </button>
+        {/if}
+        <p class={getTextClasses()}>
+            {item.name || "-"}
+        </p>
         {#if item.type === 'event'}
             <div class="ml-auto self-start text-xs font-medium px-2 py-0.5 bg-yellow-100 text-yellow-600 rounded-md">
                 {item.time || "-"}
@@ -77,6 +97,10 @@
             color: theme('colors.yellow.700');
             background: theme('colors.yellow.50');
         }
+    }
+    .done {
+        color: theme('colors.blue.500');
+        background: theme('colors.blue.50');
     }
 
 

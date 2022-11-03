@@ -50,6 +50,7 @@ export function addItem(item: Omit<Item, "id">) {
   const newItem = {
     ...item,
     id: getNewId(item),
+    done: false,
   };
   items.push(newItem);
   LS.set("items", JSON.stringify(items));
@@ -77,13 +78,12 @@ export function removeItem(id: string) {
 
 export function updateItem(item: Item) {
   const items = getItems();
-  const newItems = items.map((i) => (i.id === item.id ? item : i));
+  const newItems = items.map((i) => (i.id === item.id ? { ...i, ...item } : i));
   LS.set("items", JSON.stringify(newItems));
 }
 
 export function moveItem(id: string, date: Date) {
   const items = getItems();
-  console.log(items);
   const itemCopy = items.find((item) => item.id === id);
   if (itemCopy) {
     addItem({ ...itemCopy, date });

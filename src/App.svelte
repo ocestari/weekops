@@ -1,7 +1,7 @@
 <script lang="ts">
   import Icon from '@iconify/svelte';
   import { getWeekOfMonth, getWeeksInMonth, getDayOfYear, eachWeekOfInterval, eachDayOfInterval } from 'date-fns'
-  import { addItem as LibAddItem, getItemsFromDay, moveItem, removeItem, updateItem } from './lib/'
+  import { addItem as LibAddItem, getItemsFromDay, moveItem, removeItem, updateItem, type Item } from './lib/'
   import ItemIcon from './lib/ItemIcon.svelte';
   import WeekdayItem from './lib/WeekdayItem.svelte';
   import Settings from './lib/Settings.svelte'
@@ -111,7 +111,6 @@
 
     LibAddItem(newItem)
     showModal = false
-    console.table(JSON.parse(localStorage.getItem('items')))
     newItemDesc = ''
     newItemName = ''
     newItemTime = ''
@@ -123,7 +122,6 @@
   let selectedItem = null
 
   function onEditClick(item) {
-    console.log('click', item)
     selectedItem = item
     modalType = 'editItem'
     showModal = true
@@ -133,7 +131,6 @@
     }, 100)
   }
   function deleteItem() {
-    console.log('delete item')
     removeItem(selectedItem.id)
     showModal = false
     reloadDaysInCurrentWeek()
@@ -160,6 +157,14 @@
   function onSettingsClick() {
     modalType = 'settings'
     showModal = true
+  }
+
+  // SET TASKS AS DONE
+  function onTaskDoneClick(item: Item) {
+    if (item.type !== 'task') return;
+      item.done = !item.done
+      updateItem(item)
+      reloadDaysInCurrentWeek()
   }
 </script>
 
@@ -202,6 +207,7 @@
           <WeekdayItem item={item} on:click={() => onEditClick(item)} 
             on:dragstart={() => draggingOverItem = item}
             on:dragend={() => draggingOverItem = null}
+            on:click:done={() => onTaskDoneClick(item)}
             />
         {/each}
       </ul>
