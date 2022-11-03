@@ -12,28 +12,15 @@ export const LS = {
   },
 };
 
-interface BaseItem {
+export interface Item {
   id: string;
+  type: "task" | "note" | "event";
   date: Date;
   name: string;
   description?: string;
-}
-
-interface TaskItem extends BaseItem {
-  type: "task";
   done?: boolean;
-}
-
-interface NoteItem extends BaseItem {
-  type: "note";
-}
-
-interface EventItem extends BaseItem {
-  type: "event";
   time?: Date;
 }
-
-export type Item = TaskItem | NoteItem | EventItem;
 
 export function getNewId({ date }: Omit<Item, "id">) {
   const year = date.getFullYear();
@@ -50,7 +37,7 @@ export function addItem(item: Omit<Item, "id">) {
   const newItem = {
     ...item,
     id: getNewId(item),
-    done: false,
+    done: item.done || false,
   };
   items.push(newItem);
   LS.set("items", JSON.stringify(items));

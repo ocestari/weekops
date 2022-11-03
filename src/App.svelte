@@ -80,7 +80,7 @@
   ]
   let newItemType: "event" | "task" | "note" = "task"
   let newItemName = ''
-  let newItemTime = ''
+  let newItemTime: Date = new Date()
   let newItemDesc = ''
   let selectedDay = today
     
@@ -113,7 +113,7 @@
     showModal = false
     newItemDesc = ''
     newItemName = ''
-    newItemTime = ''
+    newItemTime = new Date()
 
     reloadDaysInCurrentWeek()
   }
@@ -141,7 +141,6 @@
     reloadDaysInCurrentWeek()
   }
 
-
   // DRAG AND DROP
   let draggingOverList: Date = null
   let draggingOverItem = null
@@ -149,6 +148,7 @@
   function onDropItem(event: DragEvent, day: Date) {
     event.preventDefault()
     moveItem(draggingOverItem.id, day)
+
     reloadDaysInCurrentWeek()
   }
 
