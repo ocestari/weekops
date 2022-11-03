@@ -72,8 +72,12 @@
     }
     setTimeout(() => {
       const todayColumn = document.querySelector(`#today-column`)
-      todayColumn?.scrollIntoView({ behavior: 'smooth', block: 'end' })
+      todayColumn?.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' })
     }, 100)
+  }
+
+  function isToday(date: Date) {
+    return date.toDateString() === new Date().toDateString()
   }
 
   // New Item
@@ -182,7 +186,7 @@
     <button class="p-2 ml-3 rounded-full hover:bg-slate-100" on:click={setNextWeek}>
       <Icon icon="heroicons:chevron-right" />
     </button>
-    <button class="ml-auto mr-4" on:click={goToToday}>Today</button>
+    <button class="ml-auto mr-4 text-sm border px-3 py-1.5 rounded-lg text-slate-500 hover:text-slate-800 hover:bg-slate-50 transition.-all font-medium shadow-sm shadow-slate-100" on:click={goToToday}>Today</button>
     <button class="mr-4 p-1 rounded-full hover:bg-slate-100 text-slate-500 hover:text-slate-800" on:click={onSettingsClick}>
       <Icon height={24} icon="heroicons:bars-2" />
     </button>
@@ -194,7 +198,7 @@
   {#each daysInCurrentWeek as day (day)}
     <div class="group snap-center w-full p-3 rounded-lg border-slate-200 "
       class:dragging-over={draggingOverList === day}
-      class:is-today={day.getDate() === new Date().getDate()}
+      class:is-today={isToday(day)}
       id={day.getDate() === new Date().getDate() ? 'today-column' : ''}
       on:dragenter={() => draggingOverList = day}
       on:drop={(event) => onDropItem(event, day)}
@@ -203,7 +207,7 @@
     >
       <h2 class="font-medium flex items-center gap-2">
         {getDayOfWeek(day.getDay()) + ' ' + day.getDate()}
-        {#if day.getDate() === new Date().getDate()}
+        {#if isToday(day)}
           <span class="bg-green-100 px-2 py-1 rounded-lg text-xs text-green-500">Today</span>
         {/if}
       </h2>
