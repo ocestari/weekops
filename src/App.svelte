@@ -185,7 +185,7 @@
   </header>
 
 <!-- KANBAN -->
-<div class="bg-dotted-grid border flex m-2 rounded-lg shadow-inner gap-3 p-2 flex-grow snap-proximity  snap-x md:snap-none overflow-x-auto">
+<div class="bg-dotted-grid border flex m-2 rounded-lg shadow-inner p-2 flex-grow snap-proximity  snap-x md:snap-none overflow-x-auto">
 
   {#each daysInCurrentWeek as day (day)}
     <div class="group snap-center w-full p-3 rounded-lg border-slate-200 "
