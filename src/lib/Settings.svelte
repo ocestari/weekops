@@ -4,6 +4,7 @@
 </script>
 
 <div class="modal-box max-w-xl w-full">
+    <img class="m-2 mx-auto" width="80" src="/icon.png" alt="">
     <h2 class="font-medium">About</h2>
     <p class="mt-4">WeekOps is an app being developed by <a class="text-blue-500 font-medium underline" target="_blank" rel="noreferrer" href="https://twitter.com/jordienr">Jordi Enric</a>
     </p>

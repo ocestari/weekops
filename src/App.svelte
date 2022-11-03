@@ -70,6 +70,10 @@
       recalculate()
       reloadDaysInCurrentWeek()
     }
+    setTimeout(() => {
+      const todayColumn = document.querySelector(`#today-column`)
+      todayColumn?.scrollIntoView({ behavior: 'smooth', block: 'end' })
+    }, 100)
   }
 
   // New Item
@@ -191,6 +195,7 @@
     <div class="group snap-center w-full p-3 rounded-lg border-slate-200 "
       class:dragging-over={draggingOverList === day}
       class:is-today={day.getDate() === new Date().getDate()}
+      id={day.getDate() === new Date().getDate() ? 'today-column' : ''}
       on:dragenter={() => draggingOverList = day}
       on:drop={(event) => onDropItem(event, day)}
       on:dragend={() => draggingOverList = null}
